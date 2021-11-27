@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
     TextField,
     Button,
@@ -8,9 +8,16 @@ import {
     Dialog,
     DialogTitle,
     DialogContent,
+    Input,
+    CircularProgress,
 } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
+import "./Registration.css";
+import icon from "../../../image/whatsapp-square-brands.svg";
+
+import useAuth from "../../../hooks/useAuth";
+import { useNavigate } from "react-router";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     "& .MuiDialogContent-root": {
@@ -22,6 +29,27 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 }));
 
 const Registration = ({ open, setOpen }) => {
+    const navigate = useNavigate();
+    const { registrationWithEmailAndPassword, isLoading } = useAuth();
+    const [registerData, setRegisterData] = useState({});
+    const [image, setImage] = useState(null);
+    const handleBlur = (e) => {
+        const newData = { ...registerData };
+        newData[e.target.name] = e.target.value;
+        setRegisterData(newData);
+    };
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        registrationWithEmailAndPassword(
+            registerData.email,
+            registerData.password,
+            registerData.firstName,
+            registerData.lastName,
+            image,
+            navigate
+        );
+    };
+
     const handleClose = () => {
         setOpen(false);
     };
@@ -33,7 +61,12 @@ const Registration = ({ open, setOpen }) => {
                 open={open}
             >
                 <DialogTitle id='customized-dialog-title' onClose={handleClose}>
-                    Modal title
+                    <Box style={{ textAlign: "center" }}>
+                        <img width='100px' src={icon} alt='' />
+                        <Typography sx={{ mb: 1 }} variant='h4'>
+                            Register a New account
+                        </Typography>
+                    </Box>
                     <IconButton
                         aria-label='close'
                         onClick={handleClose}
@@ -47,10 +80,61 @@ const Registration = ({ open, setOpen }) => {
                         <CloseIcon />
                     </IconButton>
                 </DialogTitle>
-                <DialogContent dividers>
-                    <Typography gutterBottom>
-                        Cras mattis consectetur purus sit amet fermentum.
-                    </Typography>
+                <DialogContent className='registration-container'>
+                    <form onSubmit={handleSubmit} className='registration-form'>
+                        <Box style={{ display: "flex", gap: "10px" }}>
+                            <TextField
+                                label='First Name'
+                                name='firstName'
+                                size='small'
+                                onBlur={handleBlur}
+                            />
+                            <TextField
+                                label='Last Name'
+                                name='lastName'
+                                size='small'
+                                onBlur={handleBlur}
+                            />
+                        </Box>
+                        <TextField
+                            type='email'
+                            label='email'
+                            name='email'
+                            size='small'
+                            onBlur={handleBlur}
+                        />
+                        <TextField
+                            type='password'
+                            label='password'
+                            name='password'
+                            size='small'
+                            onBlur={handleBlur}
+                        />
+                        <TextField
+                            type='password'
+                            label='confirm password'
+                            name='confirm password'
+                            size='small'
+                            onBlur={handleBlur}
+                        />
+                        <Input
+                            accept='image/*'
+                            type='file'
+                            name='image'
+                            onChange={(e) => setImage(e.target.files[0])}
+                            size='small'
+                        />
+                        <Button type='submit' variant='contained'>
+                            {isLoading ? (
+                                <CircularProgress style={{ color: "#fff" }} />
+                            ) : (
+                                "Register"
+                            )}
+                        </Button>
+                    </form>
+                    <Button variant='text' sx={{ mt: 2 }}>
+                        Have an account?
+                    </Button>
                 </DialogContent>
             </BootstrapDialog>
         </div>

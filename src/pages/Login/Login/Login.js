@@ -1,13 +1,41 @@
-import React from "react";
-import { TextField, Button, Typography, Box } from "@mui/material";
+import React, { useState } from "react";
+import {
+    TextField,
+    Button,
+    Typography,
+    Box,
+    CircularProgress,
+} from "@mui/material";
 
 import icon from "../../../image/whatsapp-square-brands.svg";
 import banner from "../../../image/3D_Square_with_WhatsApp_Logo.png";
 import "./Login.css";
 import Registration from "../Registration/Registration";
+import useAuth from "../../../hooks/useAuth";
+import { useLocation, useNavigate } from "react-router";
 
 const Login = () => {
+    const navigate = useNavigate();
+    const location = useLocation();
+    const { loginWithEmailAndPassword, isLoading } = useAuth();
     const [open, setOpen] = React.useState(false);
+    const [loginUser, setLoginUser] = useState({});
+
+    const handleLoginUser = (e) => {
+        const newUser = { ...loginUser };
+        newUser[e.target.name] = e.target.value;
+        setLoginUser(newUser);
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        loginWithEmailAndPassword(
+            loginUser.email,
+            loginUser.password,
+            location,
+            navigate
+        );
+    };
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -22,23 +50,29 @@ const Login = () => {
                 <Typography sx={{ mb: 3 }} variant='h4'>
                     Login Your account
                 </Typography>
-                <form className='login-form'>
+                <form onSubmit={handleSubmit} className='login-form'>
                     <TextField
                         label='email@example.com'
-                        id='outlined-size-small'
                         size='small'
+                        name='email'
+                        onBlur={handleLoginUser}
                     />
                     <TextField
                         type='password'
                         label='password'
-                        id='outlined-size-small'
                         size='small'
+                        name='password'
+                        onBlur={handleLoginUser}
                     />
                     <Button variant='text' sx={{ mr: "auto" }}>
                         Forget Password?
                     </Button>
                     <Button type='submit' variant='contained'>
-                        Login
+                        {isLoading ? (
+                            <CircularProgress style={{ color: "#fff" }} />
+                        ) : (
+                            "Login"
+                        )}
                     </Button>
                 </form>
                 <Button

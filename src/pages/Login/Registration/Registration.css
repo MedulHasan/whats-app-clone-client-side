@@ -1,0 +1,9 @@
+.registration-container {
+    padding-top: 5px !important;
+}
+.registration-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}

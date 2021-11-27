@@ -1,8 +1,13 @@
 import React from "react";
 import "./Home.css";
+import Navigation from "./Navigation/Navigation";
 
 const Home = () => {
-    return <div>This is home page</div>;
+    return (
+        <div>
+            <Navigation />
+        </div>
+    );
 };
 
 export default Home;
