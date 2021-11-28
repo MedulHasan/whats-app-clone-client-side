@@ -3,15 +3,27 @@ import {
     getAuth,
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
+    GoogleAuthProvider,
+    signInWithPopup,
     onAuthStateChanged,
     updateProfile,
     signOut,
 } from "firebase/auth";
 import InitializeAuthentication from "../firebase/firebase.init";
+// import { storage } from "../firebase/firebase.init";
+import {
+    getStorage,
+    ref,
+    uploadBytesResumable,
+    getDownloadURL,
+} from "firebase/storage";
+import { useNavigate } from "react-router";
 
 InitializeAuthentication();
 
 const useFirebase = () => {
+    const navigate = useNavigate();
+    const storage = getStorage();
     const auth = getAuth();
     const [user, setUser] = useState({});
     const [isLoading, setIsLoading] = useState(true);
@@ -29,15 +41,42 @@ const useFirebase = () => {
         const fullName = firstName.concat(" ", lastName);
         createUserWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
-                const newUser = {
-                    email,
-                    displayName: fullName,
-                };
-                setUser(newUser);
-                saveUserDB(fullName, email, password, image, "POST");
-                updateProfile(auth.currentUser, {
-                    displayName: fullName,
-                });
+                // file upload
+                const storageRef = ref(storage, `users/${image.name}`);
+                const uploadTask = uploadBytesResumable(storageRef, image);
+                uploadTask.on(
+                    "state_changed",
+                    (snapshot) => {},
+                    (error) => {
+                        console.log(error);
+                    },
+                    () => {
+                        getDownloadURL(uploadTask.snapshot.ref).then(
+                            (downloadURL) => {
+                                // save to state
+                                const newUser = {
+                                    email,
+                                    displayName: fullName,
+                                    photoURL: downloadURL,
+                                };
+                                setUser(newUser);
+                                // save to database
+                                saveUserDB(
+                                    fullName,
+                                    email,
+                                    downloadURL,
+                                    "POST"
+                                );
+                                // update profile
+                                updateProfile(auth.currentUser, {
+                                    displayName: fullName,
+                                    photoURL: downloadURL,
+                                });
+                            }
+                        );
+                    }
+                );
+                // file upload
                 navigate("/home");
             })
             .catch((error) => {
@@ -60,6 +99,28 @@ const useFirebase = () => {
             .finally(() => setIsLoading(false));
     };
 
+    // login using google
+    const loginUsingGoogle = (location) => {
+        const googleProvider = new GoogleAuthProvider();
+        signInWithPopup(auth, googleProvider)
+            .then((result) => {
+                const user = result.user;
+                if (user.email) {
+                    saveUserDB(
+                        user.email,
+                        user.displayName,
+                        user.photoURL,
+                        "PUT"
+                    );
+                    const destination = location?.state?.from || "/home";
+                    navigate(destination);
+                }
+            })
+            .catch((error) => {
+                console.log(error.message);
+            });
+    };
+
     // authentication state observer
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -71,7 +132,7 @@ const useFirebase = () => {
             setIsLoading(false);
         });
         return () => unsubscribe;
-    }, []);
+    }, [auth]);
 
     // sign out user
     const logout = () => {
@@ -85,12 +146,11 @@ const useFirebase = () => {
     };
 
     // new user saved to database
-    const saveUserDB = (fullName, email, password, image, method) => {
+    const saveUserDB = (fullName, email, downloadURL, method) => {
         const formData = new FormData();
         formData.append("fullName", fullName);
         formData.append("email", email);
-        formData.append("password", password);
-        formData.append("image", image);
+        formData.append("imageURL", downloadURL);
         fetch("http://localhost:8888/user", {
             method,
             body: formData,
@@ -105,6 +165,7 @@ const useFirebase = () => {
         isLoading,
         registrationWithEmailAndPassword,
         loginWithEmailAndPassword,
+        loginUsingGoogle,
         logout,
     };
 };

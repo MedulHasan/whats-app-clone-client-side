@@ -17,9 +17,14 @@ import { useLocation, useNavigate } from "react-router";
 const Login = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const { loginWithEmailAndPassword, isLoading } = useAuth();
+    const { loginWithEmailAndPassword, loginUsingGoogle, isLoading } =
+        useAuth();
     const [open, setOpen] = React.useState(false);
     const [loginUser, setLoginUser] = useState({});
+
+    const handleGoogleLogin = () => {
+        loginUsingGoogle(location, navigate);
+    };
 
     const handleLoginUser = (e) => {
         const newUser = { ...loginUser };
@@ -85,7 +90,12 @@ const Login = () => {
                 <div className='hr-or'>
                     <hr /> <Typography variant='h6'>OR</Typography> <hr />
                 </div>
-                <Button sx={{ mt: 2 }} type='submit' variant='outlined'>
+                <Button
+                    onClick={handleGoogleLogin}
+                    sx={{ mt: 2 }}
+                    type='submit'
+                    variant='outlined'
+                >
                     Google Sign In
                 </Button>
             </Box>

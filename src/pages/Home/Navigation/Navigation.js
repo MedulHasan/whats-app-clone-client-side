@@ -1,8 +1,8 @@
-import { IconButton, Menu, MenuItem } from "@mui/material";
+import { IconButton, Menu, MenuItem, CircularProgress } from "@mui/material";
 import React from "react";
-import { AiOutlinePlus } from "react-icons/ai";
 import { IoIosMore } from "react-icons/io";
 import useAuth from "../../../hooks/useAuth";
+import AddFriend from "../AddFriend/AddFriend";
 import "./Navigation.css";
 
 const Navigation = () => {
@@ -17,16 +17,19 @@ const Navigation = () => {
         setAnchorEl(null);
     };
 
-    /* if (!user.displayName) {
+    if (!user.photoURL) {
         return <CircularProgress />;
-    } */
+    }
     return (
         <div className='navigation'>
-            <img src='' alt='img' />
-            <p>name: {user.displayName}</p>
+            <img
+                style={{ width: "50px", height: "50px", borderRadius: "50%" }}
+                src={user.photoURL}
+                alt='img'
+            />
             <div>
-                <AiOutlinePlus />
-                <div>
+                <div style={{ display: "flex" }}>
+                    <AddFriend />
                     <IconButton
                         size='large'
                         onClick={handleMenu}
