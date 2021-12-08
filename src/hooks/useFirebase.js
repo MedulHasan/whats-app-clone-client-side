@@ -107,8 +107,8 @@ const useFirebase = () => {
                 const user = result.user;
                 if (user.email) {
                     saveUserDB(
-                        user.email,
                         user.displayName,
+                        user.email,
                         user.photoURL,
                         "PUT"
                     );
@@ -146,11 +146,11 @@ const useFirebase = () => {
     };
 
     // new user saved to database
-    const saveUserDB = (fullName, email, downloadURL, method) => {
+    const saveUserDB = (fullName, email, imageURL, method) => {
         const formData = new FormData();
         formData.append("fullName", fullName);
         formData.append("email", email);
-        formData.append("imageURL", downloadURL);
+        formData.append("imageURL", imageURL);
         fetch("http://localhost:8888/user", {
             method,
             body: formData,

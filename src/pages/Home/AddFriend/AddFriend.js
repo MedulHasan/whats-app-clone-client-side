@@ -1,74 +1,102 @@
 import React, { useEffect, useState } from "react";
-import {
-    Box,
-    Divider,
-    List,
-    ListItem,
-    ListItemText,
-    SwipeableDrawer,
-    IconButton,
-} from "@mui/material";
+import { Menu, MenuItem, IconButton, Typography, Button } from "@mui/material";
 import { AiOutlinePlus } from "react-icons/ai";
+import "./AddFriend.css";
+import useAuth from "../../../hooks/useAuth";
 
 const AddFriend = () => {
+    const { user } = useAuth();
     const [allUsers, setAllUsers] = useState([]);
-    const [state, setState] = useState(false);
+
+    const [anchorEl, setAnchorEl] = React.useState(null);
+
+    const handleMenu = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+    const addToChat = (email, fullName, imageURL) => {
+        const chat = {
+            creator: {
+                email: user.email,
+                fullName: user.displayName,
+                imageURL: user.photoURL,
+            },
+            participant: {
+                email,
+                fullName,
+                imageURL,
+            },
+        };
+        fetch(`http://localhost:8888/createConversation`, {
+            method: "POST",
+            headers: {
+                "content-type": "application/json",
+            },
+            body: JSON.stringify(chat),
+        });
+        handleClose();
+    };
 
     useEffect(() => {
-        fetch("http://localhost:8888/users")
+        fetch(`http://localhost:8888/users`)
             .then((res) => res.json())
             .then((users) => {
                 setAllUsers(users);
             });
     }, []);
-
-    const toggleDrawer = (open) => (event) => {
-        if (
-            event &&
-            event.type === "keydown" &&
-            (event.key === "Tab" || event.key === "Shift")
-        ) {
-            return;
-        }
-        setState(open);
-    };
-
-    console.log(allUsers);
-    const list = () => (
-        <Box
-            style={{ width: "300px" }}
-            role='presentation'
-            onClick={toggleDrawer(false)}
-            onKeyDown={toggleDrawer(false)}
-        >
-            <List>
-                {allUsers.email &&
-                    allUsers.map((user) => (
-                        <ListItem button key={user._id}>
-                            <ListItemText primary={user.email} />
-                        </ListItem>
-                    ))}
-            </List>
-            {/* <Divider /> */}
-        </Box>
-    );
     return (
         <div>
-            <IconButton
-                size='large'
-                onClick={toggleDrawer(true)}
-                color='inherit'
-            >
-                <AiOutlinePlus style={{ marginRight: "5px" }} />
+            <IconButton size='large' color='inherit' onClick={handleMenu}>
+                <AiOutlinePlus />
             </IconButton>
-            <SwipeableDrawer
-                anchor='left'
-                open={state}
-                onClose={toggleDrawer(false)}
-                onOpen={toggleDrawer(true)}
+            <Menu
+                sx={{ mt: 5 }}
+                anchorEl={anchorEl}
+                anchorOrigin={{
+                    vertical: "top",
+                    horizontal: "center",
+                }}
+                keepMounted
+                transformOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                }}
+                open={Boolean(anchorEl)}
+                onClose={handleClose}
             >
-                {list()}
-            </SwipeableDrawer>
+                {allUsers
+                    .filter((users) => users.email !== user.email)
+                    .map((user) => (
+                        <MenuItem key={user._id} className='add-user'>
+                            <img
+                                className='friend-image'
+                                src={user.imageURL}
+                                alt=''
+                            />
+                            <Typography sx={{ ml: 3 }}>
+                                {user.fullName}
+                            </Typography>
+                            <Button
+                                onClick={() =>
+                                    addToChat(
+                                        user.email,
+                                        user.fullName,
+                                        user.imageURL
+                                    )
+                                }
+                                sx={{ ml: 3 }}
+                                variant='outlined'
+                                size='small'
+                            >
+                                Add to Chat
+                            </Button>
+                        </MenuItem>
+                    ))}
+            </Menu>
         </div>
     );
 };

@@ -1,0 +1,21 @@
+.conversation-list {
+    margin: 20px 10px;
+}
+.conversation-cont {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+.participant-image {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    margin-right: 15px;
+}
+.participant-name {
+    font-size: 18px;
+    font-weight: 600;
+}
+.participant-text {
+    font-size: 14px;
+}
