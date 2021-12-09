@@ -1,10 +1,15 @@
 .conversation-list {
-    margin: 20px 10px;
+    padding: 20px 0px;
 }
 .conversation-cont {
     display: flex;
     align-items: center;
     margin-bottom: 15px;
+    padding: 10px;
+}
+.conversation-cont:hover {
+    cursor: pointer;
+    background-color: #f5f5f5;
 }
 .participant-image {
     width: 45px;

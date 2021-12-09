@@ -1,12 +1,18 @@
 import { Typography as p } from "@mui/material";
 import { Box } from "@mui/system";
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 import useAuth from "../../../hooks/useAuth";
 import "./ConversationList.css";
 
 const ConversationList = () => {
     const { user } = useAuth();
     const [conversations, setConversations] = useState([]);
+    const navigate = useNavigate();
+
+    const handleFriendWithChat = (participant) => {
+        navigate("/home/friendMessage", { state: { participant } });
+    };
 
     useEffect(() => {
         fetch(`http://localhost:8888/conversation/${user.email}`)
@@ -17,7 +23,13 @@ const ConversationList = () => {
         <div className='conversation-list'>
             {conversations.length > 0 &&
                 conversations.map((conversation) => (
-                    <div key={conversation._id} className='conversation-cont'>
+                    <div
+                        onClick={() =>
+                            handleFriendWithChat(conversation.participant)
+                        }
+                        key={conversation._id}
+                        className='conversation-cont'
+                    >
                         <img
                             className='participant-image'
                             src={conversation.participant.imageURL}

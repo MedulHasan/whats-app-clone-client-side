@@ -1,13 +1,12 @@
 .navigation-container {
-    width: 25%;
+    width: 35%;
     height: 100vh;
-    border-right: 1px solid;
 }
 .navigation {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    /* width: 100%; */
     background-color: #ededed;
     padding: 3px 10px;
+    border-right: 1px solid rgb(68, 66, 66);
 }

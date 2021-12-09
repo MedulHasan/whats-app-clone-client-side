@@ -1,0 +1,17 @@
+.chat-screen-container {
+    width: 100%;
+    background-color: rgb(221, 218, 214);
+    text-align: center;
+}
+.banner-image {
+    margin-top: 2%;
+    width: 45%;
+    border-radius: 50%;
+    text-align: center;
+}
+.home-text {
+    font-size: 30px !important;
+    font-weight: 600 !important;
+    text-align: center;
+    margin-top: 2%;
+}
