@@ -47,7 +47,7 @@ const AddFriend = () => {
             .then((users) => {
                 setAllUsers(users);
             });
-    }, []);
+    }, [user]);
     return (
         <div>
             <IconButton size='large' color='inherit' onClick={handleMenu}>

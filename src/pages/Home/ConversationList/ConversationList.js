@@ -11,7 +11,9 @@ const ConversationList = () => {
     const navigate = useNavigate();
 
     const handleFriendWithChat = (participant) => {
-        navigate("/home/friendMessage", { state: { participant } });
+        navigate("/home/friendMessage", {
+            state: { participant },
+        });
     };
 
     useEffect(() => {
@@ -23,24 +25,57 @@ const ConversationList = () => {
         <div className='conversation-list'>
             {conversations.length > 0 &&
                 conversations.map((conversation) => (
-                    <div
-                        onClick={() =>
-                            handleFriendWithChat(conversation.participant)
-                        }
-                        key={conversation._id}
-                        className='conversation-cont'
-                    >
-                        <img
-                            className='participant-image'
-                            src={conversation.participant.imageURL}
-                            alt=''
-                        />
-                        <Box>
-                            <p className='participant-name'>
-                                {conversation.participant.fullName}
-                            </p>
-                            <p className='participant-text'>Text Here</p>
-                        </Box>
+                    <div key={conversation._id}>
+                        {conversation.creator.email !== user.email ? (
+                            <div
+                                onClick={() =>
+                                    handleFriendWithChat(
+                                        user.email ===
+                                            conversation.participant.email
+                                            ? conversation.creator
+                                            : conversation.participant
+                                    )
+                                }
+                                className='conversation-cont'
+                            >
+                                <img
+                                    className='participant-image'
+                                    src={conversation.creator.imageURL}
+                                    alt=''
+                                />
+                                <Box>
+                                    <p className='participant-name'>
+                                        {conversation.creator.fullName}
+                                    </p>
+                                    <p className='participant-text'>
+                                        Text Here
+                                    </p>
+                                </Box>
+                            </div>
+                        ) : (
+                            <div
+                                onClick={() =>
+                                    handleFriendWithChat(
+                                        conversation.participant
+                                    )
+                                }
+                                className='conversation-cont'
+                            >
+                                <img
+                                    className='participant-image'
+                                    src={conversation.participant.imageURL}
+                                    alt=''
+                                />
+                                <Box>
+                                    <p className='participant-name'>
+                                        {conversation.participant.fullName}
+                                    </p>
+                                    <p className='participant-text'>
+                                        Text Here
+                                    </p>
+                                </Box>
+                            </div>
+                        )}
                     </div>
                 ))}
         </div>
