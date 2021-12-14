@@ -90,7 +90,7 @@ const useFirebase = () => {
         setIsLoading(true);
         signInWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
-                const destination = location?.state?.from || "/home";
+                const destination = "/home";
                 navigate(destination);
             })
             .catch((error) => {
@@ -112,7 +112,7 @@ const useFirebase = () => {
                         user.photoURL,
                         "PUT"
                     );
-                    const destination = location?.state?.from || "/home";
+                    const destination = "/home";
                     navigate(destination);
                 }
             })

@@ -10,9 +10,10 @@ const ConversationList = () => {
     const [conversations, setConversations] = useState([]);
     const navigate = useNavigate();
 
-    const handleFriendWithChat = (participant) => {
+    const handleFriendWithChat = (participant, conversation) => {
+        // console.log(conversation);
         navigate("/home/friendMessage", {
-            state: { participant },
+            state: { participant: participant, conversation: conversation },
         });
     };
 
@@ -33,7 +34,8 @@ const ConversationList = () => {
                                         user.email ===
                                             conversation.participant.email
                                             ? conversation.creator
-                                            : conversation.participant
+                                            : conversation.participant,
+                                        conversation
                                     )
                                 }
                                 className='conversation-cont'
@@ -56,7 +58,8 @@ const ConversationList = () => {
                             <div
                                 onClick={() =>
                                     handleFriendWithChat(
-                                        conversation.participant
+                                        conversation.participant,
+                                        conversation
                                     )
                                 }
                                 className='conversation-cont'

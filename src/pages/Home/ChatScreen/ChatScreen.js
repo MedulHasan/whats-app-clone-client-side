@@ -8,7 +8,7 @@ const ChatScreen = () => {
         <div className='chat-screen-container'>
             <img className='banner-image' src={home} alt='' />
             <Typography className='home-text'>
-                Keep Your Connection with WhatsApp
+                Keep Your Connection with Your Friends
             </Typography>
         </div>
     );
